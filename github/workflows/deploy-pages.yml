@@ -1,0 +1,60 @@
+name: Deploy mirrored site to GitHub Pages
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install mirror tools
+        run: sudo apt-get update && sudo apt-get install -y wget
+
+      - name: Create publish directory
+        run: mkdir -p public
+
+      - name: Mirror target site
+        env:
+          TARGET_URL: https://assessed-listprice-carnival-warrant.trycloudflare.com/
+        run: |
+          rm -rf public/*
+          wget \
+            --mirror \
+            --convert-links \
+            --adjust-extension \
+            --page-requisites \
+            --no-parent \
+            --span-hosts \
+            --wait=1 \
+            --limit-rate=200k \
+            -e robots=off \
+            -P public \
+            "$TARGET_URL"
+
+          MIRRORED_DIR=$(find public -maxdepth 2 -type d -name "assessed-listprice-carnival-warrant.trycloudflare.com" | head -n 1 || true)
+          if [ -n "$MIRRORED_DIR" ]; then
+            cp -a "$MIRRORED_DIR"/. public/
+            rm -rf "$MIRRORED_DIR"
+          fi
+
+      - name: Ensure root index exists
+        run: |
+          if [ ! -f public/index.html ]; then
+            echo '<!doctype html><html><head><meta charset="utf-8"><title>Marginalia Mirror</title></head><body><h1>Mirror unavailable</h1><p>The target site could not be mirrored yet. Please retry later.</p></body></html>' > public/index.html
+          fi
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: gh-pages
+          force_orphan: true

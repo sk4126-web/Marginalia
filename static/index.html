@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Marginalia ✨ — Your Cute Document Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Header / Nav -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button id="btnToggleSidebar" class="btn-sidebar-toggle" title="Past Conversations">
+        <span class="btn-icon-emoji">🌸</span>
+        <span>History</span>
+        <span id="historyBadgeCount" class="history-badge">0</span>
+      </button>
+
+      <div class="nav-brand">
+        <span class="brand-avatar">🦉</span>
+        <div class="brand-text">
+          <span class="brand-title">Marginalia<span class="sparkle-star">✨</span></span>
+          <span class="brand-subtitle">Smart Document Companion</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <button id="btnNewChatGlobal" class="btn-cute-action" title="Start a fresh chat">
+        <span>✨ New Chat</span>
+      </button>
+      <button id="btnSettings" class="btn-pill-ghost" title="Settings & Engine">
+        <span>⚙️ Settings</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- History Sidebar Drawer -->
+  <aside id="historySidebar" class="history-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title-row">
+        <h3><span class="emoji-heading">📚</span> Chat History</h3>
+        <button id="btnCloseSidebar" class="btn-circle-close" title="Close history">✕</button>
+      </div>
+      <button id="btnNewChatSidebar" class="btn-new-chat-sidebar">
+        <span>✨ + New Document Chat</span>
+      </button>
+    </div>
+
+    <div id="historyList" class="history-list">
+      <div id="emptyHistoryNotice" class="empty-history-notice">
+        <span class="empty-emoji">🐣</span>
+        <span>No past chats yet!</span>
+        <small>Upload documents to chat and your conversations will be saved here automatically 💕</small>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button id="btnClearAllHistory" class="btn-clear-all" disabled>
+        <span>🗑️ Clear All History</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Split Layout -->
+  <main class="main-container">
+    <!-- Left Column: Document Reader & Uploader -->
+    <section class="left-pane">
+      <div class="hero-card">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>Universal Document AI 💖</span>
+        </div>
+        <h1 class="main-headline">Chat with any document <span class="highlight-sparkle">instantly!</span></h1>
+        <p class="subtitle">
+          Drop any <strong>PDF</strong>, <strong>Word (.docx)</strong>, <strong>Excel (.xlsx, .xlsm)</strong>, or <strong>Notes</strong>. 
+          I'll read it, find the exact answers, and cite every page! (◕‿◕)✨
+        </p>
+      </div>
+
+      <!-- File Dropzone -->
+      <div id="dropzone" class="dropzone">
+        <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.xlsx,.xlsm,.xls,.txt,.md,.csv,.json,.html" class="file-input-hidden" />
+        <div class="dropzone-content">
+          <div class="drop-mascot">
+            <span class="mascot-anim">📂</span>
+            <span class="sparkle-float">✨</span>
+          </div>
+          <div class="dropzone-text">
+            <span class="primary-prompt">Drop your document here!</span>
+            <span class="secondary-prompt">Supports PDF, DOCX, XLSX, XLSM, CSV, MD & Text</span>
+          </div>
+          <button type="button" class="btn-browse-cute" onclick="document.getElementById('fileInput').click()">
+            <span>Choose File 🌸</span>
+          </button>
+        </div>
+
+        <!-- Cute Format Badges -->
+        <div class="format-badges">
+          <span class="badge badge-pdf">📕 .PDF</span>
+          <span class="badge badge-word">📘 .DOCX</span>
+          <span class="badge badge-excel">📗 .XLSX / .XLSM</span>
+          <span class="badge badge-csv">📊 .CSV</span>
+          <span class="badge badge-text">📝 .MD / .TXT</span>
+        </div>
+      </div>
+
+      <!-- Loaded Document Info Card -->
+      <div id="docInfoCard" class="doc-info-card hidden">
+        <div class="doc-info-header">
+          <div class="doc-info-title-group">
+            <span id="docTypeIcon" class="doc-badge-icon">📄</span>
+            <div class="doc-title-box">
+              <h3 id="docName" class="doc-title-text">Document.pdf</h3>
+              <p id="docMetaSub" class="doc-meta-sub">PDF Document • 12 Pages • 42,100 characters</p>
+            </div>
+          </div>
+          <button id="btnClearDoc" class="btn-circle-close" title="Change document">✕</button>
+        </div>
+        
+        <div class="doc-stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Passage Chunks</span>
+            <span id="statChunks" class="stat-value">54</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Pages / Sheets</span>
+            <span id="statSections" class="stat-value">12</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Status</span>
+            <span class="stat-value ready-status">✨ Ready</span>
+          </div>
+        </div>
+
+        <!-- Detected Topics Section -->
+        <div id="docTopicsSection" class="doc-topics-section hidden">
+          <span class="topics-label">🌸 Detected Topics & Sections:</span>
+          <div id="docTopicsList" class="doc-topics-list"></div>
+        </div>
+      </div>
+
+      <!-- Paste Text Area -->
+      <div class="paste-section">
+        <div class="paste-header">
+          <label for="textInput" class="paste-label">Or paste text directly:</label>
+          <span id="charCount" class="char-count">0 / 100,000 characters</span>
+        </div>
+        <textarea id="textInput" placeholder="…or paste raw document text, spreadsheet tables, or articles here (✿◠‿◠)" class="text-input-area"></textarea>
+      </div>
+
+      <!-- Read / Index Button -->
+      <div class="action-bar">
+        <button id="btnReadDoc" class="btn-read-cute" disabled>
+          <span id="btnReadDocText">Read Document ✨</span>
+          <span id="btnReadSpinner" class="spinner hidden"></span>
+        </button>
+        <span id="indexFeedback" class="index-feedback"></span>
+      </div>
+    </section>
+
+    <!-- Right Column: Chat & Citations Pane -->
+    <section class="right-pane">
+      <!-- Active Document Bar -->
+      <div class="active-doc-bar">
+        <div class="active-doc-indicator">
+          <span class="indicator-dot"></span>
+          <span id="chatActiveDocLabel" class="chat-doc-name">No document loaded yet</span>
+        </div>
+
+        <div class="chat-toolbar-actions">
+          <button id="btnClearCurrentChat" class="btn-cute-toolbar" title="Clear current chat thread">
+            <span>🔄 Clear Chat</span>
+          </button>
+          <div id="engineBadge" class="engine-pill">🌸 Local Synthesizer (Free)</div>
+        </div>
+      </div>
+
+      <!-- Chat Messages Container -->
+      <div id="chatMessages" class="chat-messages">
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state">
+          <div class="empty-mascot-box">
+            <span class="empty-mascot-owl">🦉</span>
+            <span class="floating-hearts">💖</span>
+          </div>
+          <h2 class="empty-title">Ready to explore!</h2>
+          <p class="empty-desc">Upload any document on the left or paste text to start asking questions, getting summaries, and viewing verified citations!</p>
+          <div id="suggestedQueries" class="suggested-queries hidden">
+            <p class="suggested-heading">💡 Popular questions to get started:</p>
+            <div id="suggestedButtons" class="suggested-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Interactive Actions Bar -->
+      <div id="quickActionsBar" class="quick-actions-bar hidden">
+        <span class="quick-actions-title">⚡ Instant Insights:</span>
+        <div class="quick-actions-chips">
+          <button type="button" class="btn-quick-action" data-prompt="Give me a comprehensive executive summary of this document with key topics and conclusions.">
+            📑 Executive Summary
+          </button>
+          <button type="button" class="btn-quick-action" data-prompt="Break down all the key topics and sections covered in this document with citations.">
+            📌 Topic Breakdown
+          </button>
+          <button type="button" class="btn-quick-action" data-prompt="Extract all major numerical data points, metrics, and key numbers mentioned in this document.">
+            📊 Key Metrics & Data
+          </button>
+          <button type="button" class="btn-quick-action" data-prompt="Explain the core message and concepts of this document simply and clearly like I am five.">
+            💡 Explain Simply
+          </button>
+          <button type="button" class="btn-quick-action" data-prompt="What are the main action items, recommendations, and key takeaways?">
+            🎯 Action Items
+          </button>
+        </div>
+      </div>
+
+      <!-- Chat Input Form -->
+      <form id="chatForm" class="chat-input-form">
+        <div class="input-wrapper">
+          <textarea id="chatInput" rows="1" placeholder="Upload a document to ask me anything..." disabled class="chat-textarea"></textarea>
+          <button type="submit" id="btnAsk" disabled class="btn-ask-cute" title="Send Question">
+            <span>Ask</span>
+            <span class="ask-sparkle">✨</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Settings / API Key Modal -->
+  <div id="settingsModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✨ AI Model & Settings</h3>
+        <button id="btnCloseModal" class="btn-circle-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">
+          Marginalia works 100% free with zero configuration using its smart <strong>Local Semantic Synthesizer</strong>. 
+          Optionally, you can connect your Gemini or OpenAI API key for creative generative synthesis.
+        </p>
+
+        <div class="form-group">
+          <label class="cute-form-label">Engine Selection:</label>
+          <div class="radio-options">
+            <label class="radio-label">
+              <input type="radio" name="engineProvider" value="auto" checked />
+              <span>🌸 Local Synthesizer (Free, Offline, No Key)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="engineProvider" value="gemini" />
+              <span>⚡ Google Gemini (Gemini 2.5 Flash)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="engineProvider" value="openai" />
+              <span>🤖 OpenAI (GPT-4o mini)</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="apiKeyGroup" class="form-group hidden">
+          <label for="apiKeyInput" id="apiKeyLabel" class="cute-form-label">API Key:</label>
+          <input type="password" id="apiKeyInput" placeholder="Enter your API key..." class="form-input" />
+          <p class="input-help">Your API key is stored safely only in your local browser session.</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnSaveSettings" class="btn-read-cute">Save Settings 💖</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
